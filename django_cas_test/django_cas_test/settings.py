@@ -11,8 +11,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'db.sqlite',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -96,9 +96,33 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django_cas.middleware.CASMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'django_cas.backends.CASBackend',
+)
+
+CAS_SERVER_URL = 'http://auth-test.berkeley.edu/cas/'
+
+#  `CAS_ADMIN_PREFIX`: The URL prefix of the Django administration site.
+#  If undefined, the CAS middleware will check the view being rendered to
+#  see if it lives in `django.contrib.admin.views`.
+#  `CAS_EXTRA_LOGIN_PARAMS`: Extra URL parameters to add to the login URL
+#  when redirecting the user.
+#  `CAS_IGNORE_REFERER`: If `True`, logging out of the application will
+#  always send the user to the URL specified by `CAS_REDIRECT_URL`.
+#  `CAS_LOGOUT_COMPLETELY`: If `False`, logging out of the application
+#  won't log the user out of CAS as well.
+#  `CAS_REDIRECT_URL`: Where to send a user after logging in or out if
+#  there is no referrer and no next page set. Default is `/`.
+#  `CAS_RETRY_LOGIN`: If `True` and an unknown or invalid ticket is
+#  received, the user is redirected back to the login page.
+#  `CAS_VERSION`: The CAS protocol version to use. `'1'` and `'2'` are
+#  supported, with `'2'` being the default.
 
 ROOT_URLCONF = 'django_cas_test.urls'
 
@@ -118,8 +142,9 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cas_test',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
